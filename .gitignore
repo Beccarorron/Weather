@@ -1,0 +1,5 @@
+venv/
+.env
+history.json
+history_10.json
+history_1000.json
