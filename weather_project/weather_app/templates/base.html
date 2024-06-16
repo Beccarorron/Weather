@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Weather{% endblock title %}</title>
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+	{% load customtag %}
+    {% load static %}
+    <script src="{% static 'weather_app/jquery-3.7.1.js' %}"></script>
+	<link rel="stylesheet" href="{% static 'weather_app/style.css' %}">
+    
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Weather_app</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'history' %}">About</a>
+                    </li>
+                    <!-- Add more navigation items here -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row fs-3">
+			
+				<p style="font-family: serif" class="text-center fs-2 text-muted">{% block welcome %}Welcome to my weather site{% endblock welcome %}</p>
+			
+            <div class="col">
+			</div>
+			<div class="col fs-5 shadow p-3 mb-5 bg-body rounded">
+				{% block content %}
+
+				{% endblock content %}
+
+			</div>
+			<div class="col"></div>
+		</div>
+		<div class="row">
+			<div class="col"></div>
+			<div class="col-	fs-5 shadow mb-5 bg-body rounded">
+				{% block table %}
+				
+				{% endblock table %}
+			</div>	
+			<div class="col"></div>
+		</div>
+    </div>	
+
+    {% bootstrap_javascript %}
+</body>
+</html>

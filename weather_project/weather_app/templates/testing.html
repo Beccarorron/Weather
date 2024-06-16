@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Testing Page{% endblock title %}
+
+{% block welcome %}<p>Welcom to the testing page</p>{% endblock welcome %}
+{% block content %}
+{{form.media}}
+
+
+    {% csrf_token %}
+    {% crispy form %}
+    
+{% endblock content %}

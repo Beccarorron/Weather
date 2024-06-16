@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Home{% endblock title %}
+
+{% block welcome %}Welcome to today's weather{% endblock welcome %}
+{% block content %}
+{{form.media}}
+
+
+    {% csrf_token %}
+    {% crispy form %}
+    
+{% endblock content %}

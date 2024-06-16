@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Weather Page{% endblock title %}
+
+{% block welcome %}Here is your weather{% endblock welcome %}
+{% block table %}
+
+<div class="container">
+    <div class="row">
+        <!-- First Column -->
+        <div class="col">
+            {% for key, value in first_half.items %}
+                <div class="row">
+                    <div class="col-4">{{ key }}</div>
+                    <div class="col-8" >{{ value }}</div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Second Column --> 
+        <div class="col">
+            {% for key, value in second_half.items %}
+                <div class="row">
+                    {% if key != 'Icon' %}
+                    <div class="col-4">{{ key }}</div>
+                    <div class="col-8">{{ value }}</div>
+                    {% else %}
+                    <div class="col-12"><img src="{{ value }}" alt="Weather Icon" class="img-fluid"></div>  
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+    
+{% endblock table %}
