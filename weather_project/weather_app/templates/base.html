@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Weather{% endblock title %}</title>
+    <title>{% block title %}Homer{% endblock title %}</title>
     {% load django_bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
 	{% load customtag %}
     {% load static %}
+    {% load crispy_forms_tags %}
     <script src="{% static 'weather_app/jquery-3.7.1.js' %}"></script>
 	<link rel="stylesheet" href="{% static 'weather_app/style.css' %}">
     
@@ -33,33 +34,40 @@
             </div>
         </div>
     </nav>
+{% block welcome %}{% endblock welcome %}
+	
 
-    <div class="container-fluid">
-        <div class="row fs-3">
-			
-				<p style="font-family: serif" class="text-center fs-2 text-muted">{% block welcome %}Welcome to my weather site{% endblock welcome %}</p>
-			
-            <div class="col">
-			</div>
-			<div class="col fs-5 shadow p-3 mb-5 bg-body rounded">
-				{% block content %}
+	
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4" >
+                {% block content %} 
+                
+                {% endblock content %}
+            </div>
+            <div class="col-sm-4">
+                        {% block table %}
+                        
+                        {% endblock table %}
+            </div>
+            <div class="col-sm-4">
+                {% block accordion %}
+                {% endblock accordion %}
 
-				{% endblock content %}
-
-			</div>
-			<div class="col"></div>
-		</div>
-		<div class="row">
-			<div class="col"></div>
-			<div class="col-	fs-5 shadow mb-5 bg-body rounded">
-				{% block table %}
-				
-				{% endblock table %}
-			</div>	
-			<div class="col"></div>
-		</div>
-    </div>	
-
-    {% bootstrap_javascript %}
+            </div>
+                <div class="row">
+                    <div class="col-sm-6" >
+                                <!-- Content for the first half of the second column -->
+                    </div>
+                    <div class="col-sm-6" >
+                                    <!-- Content for the second half of the second column -->
+                    </div>        
+                </div>
+            </div>
+        </div>
+    </div>
+	{% block cards %}	
+    {% endblock cards %}
+		
 </body>
 </html>

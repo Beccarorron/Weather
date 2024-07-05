@@ -10,5 +10,104 @@
 
     {% csrf_token %}
     {% crispy form %}
-    
+
 {% endblock content %}
+
+{% block table %}
+{% if first_half %}
+<div class="card shadow p-3 mb-5 bg-body rounded" style="width: 18rem;">
+    <div class="card-body">
+        <table class="table">
+            <tbody>
+                {% for key, value in first_half.items %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+                <!-- Second Half -->
+                {% for key, value in second_half.items %}
+                <tr>
+                    {% if key != 'Icon' %}
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                    {% else %}
+                    <td colspan="2"><img src="{{ value }}" alt="Weather Icon" class="img-fluid"></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+</div>
+{% endblock table %}
+
+
+{% block cards %}
+<div class="container mt-4">
+    <div class="row">
+        {% for day in daily_weather %}
+        <div class="col-md-3 mb-4">
+            <div class="card">
+
+                <div class="card-body">
+                    <h5 class="card-title">{{ day.Date }}</h5>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Clouds</td>
+                                <td>{{ day.Clouds }}</td>
+                            </tr>
+                            <tr>
+                                <td>Rain</td>
+                                <td>{{ day.Rain }}</td>
+                            </tr>
+                            <tr>
+                                <td>Max Temp</td>
+                                <td>{{ day.Temperature.Max }}</td>
+                            </tr>
+                            <tr>
+                                <td>Min Temp</td>
+                                <td>{{ day.Temperature.Min }}</td>
+                            </tr>
+                            <tr>
+                                <td>Description</td>
+                                <td>{{ day.Weather_Description}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <img src="{{ day.Icon }}" alt="Weather Icon" class="img-fluid">
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock cards %}
+{% block accordion %}
+<div class="accordion" id="accordionExample">
+    {% for day in daily_weather %}
+    <div class="accordion-item">
+      <h4 class="accordion-header" id="heading{{ forloop.counter }}">
+        {{ day.Date }}
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+            <strong>Description:  </strong>{{ day.Weather_Description }}
+          
+        </button>
+      </h4>
+      <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse {% if forloop.first %} show {% endif %}" aria-labelledby="heading{{forloop.counter }}" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            <strong>Clouds: </strong>{{ day.Clouds }}<br>
+            <strong>Rain: </strong>{{ day.Rain }}<br>
+            <strong>Max Temp: </strong>{{ day.Temperature.Max }}<br>
+            <strong>Min Temp: </strong>{{ day.Temperature.Min }}<br>
+            <img src="{{ day.Icon }}" alt="Weather Icon" class="img-fluid">
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+{% endblock accordion %}
+
+

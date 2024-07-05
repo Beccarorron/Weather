@@ -59,31 +59,39 @@ statechoices = [
         ('WY', 'Wyoming')
 ]
 class DateTimeForm(forms.Form):
-    begin_date = forms.DateTimeField(
-        widget=DateTimePickerInput(
-            options={
-                "format": "YYYY/MM/DD HH:00:00"
-            }
+    def __init__(self, *args, **kwargs):
+        include_end_date = kwargs.pop('include_end_date', True)  # Default to including end_date
+        super(DateTimeForm, self).__init__(*args, **kwargs)
+        self.fields['begin_date'] = forms.DateTimeField(
+            widget=DateTimePickerInput(options={"format": "YYYY/MM/DD HH:00:00"})
         )
-    )
-    end_date = forms.DateTimeField(
-        widget=DateTimePickerInput(
-            options={
-                "format": "YYYY/MM/DD HH:00:00"
-            }
-        )
-    )
+        if include_end_date:
+            self.fields['end_date'] = forms.DateTimeField(
+                widget=DateTimePickerInput(options={"format": "YYYY/MM/DD HH:00:00"})
+            )
 class NewForm(forms.Form):
-    state = forms.ChoiceField(label="State", choices=statechoices, widget=forms.Select(attrs={'class': 'form-select, form-control, form-label'}))
     city = forms.CharField(label="City", widget=forms.TextInput(attrs={'type': 'text', 'class': 'form-control form-label'}))
+    state = forms.ChoiceField(label="State", choices=statechoices, widget=forms.Select(attrs={'class': 'form-select, form-control, form-label'}))
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.form_method = 'POST'
         self.helper.add_input(Submit('submit', 'Submit', css_class='btn btn-primary'))
         
-        
-        
+class CombinedForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        include_end_date = kwargs.pop('include_end_date', True)  # Default to including end_date
+        super(CombinedForm, self).__init__(*args, **kwargs)
+        self.fields['city'] = forms.CharField(label="City", widget=forms.TextInput(attrs={'type': 'text', 'class': 'form-control form-label'}))
+        self.fields['state'] = forms.ChoiceField(label="State", choices=statechoices, widget=forms.Select(attrs={'class': 'form-select, form-control, form-label'}))
+        self.fields['begin_date'] = forms.DateTimeField(
+            widget=DateTimePickerInput(options={"format": "YYYY/MM/DD HH:00:00"})
+        )
+        if include_end_date:
+            self.fields['end_date'] = forms.DateTimeField(
+                widget=DateTimePickerInput(options={"format": "YYYY/MM/DD HH:00:00"})
+            )       
+    
     
         
         
