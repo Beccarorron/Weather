@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 from weather_app.models import Weather, Clouds, WeatherDescription, Wind, City, Time, Rain, Snow, State
 import json
-
 class Command(BaseCommand):
     help = 'Loads a JSON file into the database'
 
@@ -67,8 +66,7 @@ class Command(BaseCommand):
                         city_name=city,
                         state=state,
                         dt_iso=time,
-                        one_hour=city_data['rain']['1h'],
-                    
+                        one_hour=city_data['rain']['1h']
                         )
                 if 'snow' in city_data:
                     Snow.objects.create(

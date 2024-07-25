@@ -7,9 +7,9 @@ class State(models.Model):
 class City(models.Model):
     lon = models.FloatField()
     lat = models.FloatField()
-    city_name = models.CharField(max_length=30)
+    city_name = models.CharField(primary_key=True,max_length=200,)
     state = models.ForeignKey(State, on_delete=models.CASCADE)
-
+    
     
 class Time(models.Model):
     city_name = models.ForeignKey(City, on_delete=models.CASCADE)
@@ -66,8 +66,9 @@ class Rain(models.Model):
     dt_iso = models.ForeignKey(Time, on_delete=models.CASCADE)
     one_hour = models.FloatField(null=True)
 
-    # def __str__(self):
-    #     return f'Rain in {self.city_name.city_name}, {self.state.state} at {self.dt_iso.dt_iso}: {self.one_hour}'
+
+    def __str__(self):
+        return f'Rain in {self.city_name.city_name}, {self.state.state} at {self.dt_iso.dt_iso}: {self.one_hour}'
 
 class Snow(models.Model):
     city_name = models.ForeignKey(City, on_delete=models.CASCADE)

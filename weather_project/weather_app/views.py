@@ -4,12 +4,18 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from dotenv import load_dotenv
 import os
-from utilities.weather_processor import get_weather, get_daily
+import pandas as pd
 from .forms import CombinedForm, NewForm
-from .models import Rain
-from utilities.utils import get_rain_history
-import json
+from .models import Rain, Snow
+from utilities.weather_processor import get_daily, get_weather
+import numpy as np
+from utilities.utils import get_plot
 
+import csv
+
+# import urllib
+# import matplotlib.pyplot as plt
+# import io, base64
 load_dotenv()
 
 weather_api_key = os.getenv('weather_api_key')
@@ -44,12 +50,11 @@ def index(request):
 
 def history(request):
     if request.method == 'POST':
-        city_name = request.POST['city']
+        city = request.POST['city']
         state_name = request.POST['state']
         form = CombinedForm(request.POST)
         dt_begin = None
         dt_end = None
-        total_rain: float = 0.0
 
         if form.is_valid():
             try:
@@ -65,19 +70,75 @@ def history(request):
                 dt_iso_combined_end = dt_reset_end.isoformat()
                 parsed_date_begin = datetime.datetime.fromisoformat(dt_iso_combined_end)
                 dt_iso_end = parsed_date_begin.strftime('%Y-%m-%d %H:%M:%S %z UTC')
-                print(dt_iso_begin, dt_iso_end, city_name, state_name)
+                print(dt_iso_begin, dt_iso_end, city, state_name)
+                
+                new_query  = list(Rain.objects.filter(dt_iso__dt_iso__range=(dt_iso_begin, dt_iso_end),city_name__city_name=city,state__state=state_name).values_list('city_name__city_name','state__state','dt_iso__dt_iso','one_hour'))
+                df = pd.DataFrame(new_query, columns=['city','state','dates','rain'])
+                df['dates'] = df['dates'].str.slice(0,16)
+                df['dates'] = pd.to_datetime(df['dates'], format='%Y-%m-%d %H:%M')
+                df.to_csv('rain.csv', encoding='utf-8')
 
-                # get_rain_history is in utils.py and returns a list of dictionaries
-                rain_history = get_rain_history(city_name, state_name, dt_iso_begin, dt_iso_end)
-                for rain in rain_history:
-                   total_rain += rain['one_hour']
-                   print(total_rain)
-                total_rain = round(total_rain*0.0393701, 2)
+                rain_axis:list =  df['rain'].groupby(df['dates'].dt.to_period('D')).sum().mul(.0393701)
+                date_axis:list = rain_axis.axes
+                
+                for date in date_axis:
+                    df = pd.Series(date,index=date).astype(dtype='datetime64[ns]')                        
+                    
+                x = [x for x in df]
+                y = [y for y in rain_axis]
+                condition:str = 'rain'
+                graph = get_plot(x,y,condition)
             except requests.RequestException as e:
                 return HttpResponse(f'Error: {str(e)}')
-
-        return (render(request, 'history.html', {'form': form, 'rain': total_rain}))
+        return (render(request, 'history.html', {'form':form,'chart': graph}))
     else:
         form = CombinedForm(include_end_date=True)
         return render(request, 'history.html', {'form': form})
     
+ 
+def get_snow(request):
+    if request.method == 'POST':
+        city = request.POST['city']
+        state_name = request.POST['state']
+        form = CombinedForm(request.POST)
+        dt_begin = None
+        dt_end = None
+
+        if form.is_valid():
+            try:
+# dt_begin and dt_end are foramtted to be used in the snow.objests query
+                dt_begin = form.cleaned_data['begin_date']
+                dt_reset_begin = dt_begin.replace(minute=0, second=0)
+                dt_iso_combined_begin = dt_reset_begin.isoformat()
+                parsed_date_begin = datetime.datetime.fromisoformat(dt_iso_combined_begin)
+                dt_iso_begin = parsed_date_begin.strftime('%Y-%m-%d %H:%M:%S %z UTC')
+
+                dt_end = form.cleaned_data['end_date']
+                dt_reset_end = dt_end.replace(minute=0, second=0)
+                dt_iso_combined_end = dt_reset_end.isoformat()
+                parsed_date_begin = datetime.datetime.fromisoformat(dt_iso_combined_end)
+                dt_iso_end = parsed_date_begin.strftime('%Y-%m-%d %H:%M:%S %z UTC')
+                print(dt_iso_begin, dt_iso_end, city, state_name)
+                
+                new_query  = list(Snow.objects.filter(dt_iso__dt_iso__range=(dt_iso_begin, dt_iso_end),city_name__city_name=city,state__state=state_name).values_list('city_name__city_name','state__state','dt_iso__dt_iso','one_hour'))
+                df = pd.DataFrame(new_query, columns=['city','state','dates','snow'])
+                df['dates'] = df['dates'].str.slice(0,16)
+                df['dates'] = pd.to_datetime(df['dates'], format='%Y-%m-%d %H:%M')
+                df.to_csv('snow.csv', encoding='utf-8')
+
+                snow_axis:list =  df['snow'].groupby(df['dates'].dt.to_period('D')).sum().mul(.0393701)
+                date_axis:list = snow_axis.axes
+                
+                for date in date_axis:
+                    df = pd.Series(date,index=date).astype(dtype='datetime64[ns]')                        
+                    
+                x = [x for x in df]
+                y = [y for y in snow_axis]
+                condition ='snow'
+                graph = get_plot(x,y,condition)
+            except requests.RequestException as e:
+                return HttpResponse(f'Error: {str(e)}')
+        return (render(request, 'snow.html', {'form':form,'chart': graph}))
+    else:
+        form = CombinedForm(include_end_date=True)
+        return render(request, 'snow.html', {'form': form})   

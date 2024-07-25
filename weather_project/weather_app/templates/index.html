@@ -45,7 +45,7 @@
 
 
 {% block cards %}
-<div class="container mt-4">
+<!-- <div class="container mt-4">
     <div class="row">
         {% for day in daily_weather %}
         <div class="col-md-3 mb-4">
@@ -82,8 +82,8 @@
             </div>
         </div>
         {% endfor %}
-    </div>
-</div>
+    </div> -->
+<!-- </div> -->
 {% endblock cards %}
 {% block accordion %}
 <div class="accordion" id="accordionExample">
@@ -101,7 +101,7 @@
             <strong>Clouds: </strong>{{ day.Clouds }}<br>
             <strong>Rain: </strong>{{ day.Rain }}<br>
             <strong>Max Temp: </strong>{{ day.Temperature.Max }}<br>
-            <strong>Min Temp: </strong>{{ day.Temperature.Min }}<br>
+            <strong>Min Temp: </strong>{{day.Temperature.Min }}<br>
             <img src="{{ day.Icon }}" alt="Weather Icon" class="img-fluid">
         </div>
       </div>

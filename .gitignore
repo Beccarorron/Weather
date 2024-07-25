@@ -1,5 +1,12 @@
 venv/
 .env
 history.json
-history_10.json
-history_1000.json
+history_part.json
+history_part_2.json
+snow.csv
+rain.csv
+rain2.csv
+change_date.py
+newdata.py
+/.vscode
+/migrations/
